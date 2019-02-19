@@ -340,8 +340,7 @@ class PolynomialTest(unittest.TestCase):
     with self.assertRaises(TypeError):
       'C' != self.pol_1
 # end class PolynomialTest
-	  
+
 # Main
 if __name__ == '__main__':
     unittest.main()
-	
