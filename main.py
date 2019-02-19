@@ -2,13 +2,39 @@ from polynomial import Polynomial
 import unittest
 
 class PolynomialTest(unittest.TestCase):
-
   def setUp(self):
     self.pol_1 = Polynomial([1,2,0,-2])
     self.pol_2 = Polynomial([1,2,0,-3])
     self.pol_3 = Polynomial([-3,1])
     self.pol_4 = Polynomial([3,-5,7])
     self.pol_5 = Polynomial([4,0,0,0])
+
+  def test_init(self):
+    with self.assertRaises(TypeError):
+      Polynomial(8)
+    with self.assertRaises(TypeError):
+      Polynomial((1, 2, 3))
+    with self.assertRaises(TypeError):
+      Polynomial("string")
+    with self.assertRaises(TypeError):
+      Polynomial('5')
+    with self.assertRaises(TypeError):
+      Polynomial([1.1,2])
+    with self.assertRaises(TypeError):
+      Polynomial([1,2.])
+    with self.assertRaises(TypeError):
+      Polynomial([1,2+3j])
+    with self.assertRaises(TypeError):
+      Polynomial(['1',2])
+    with self.assertRaises(TypeError):
+      Polynomial([False,2])
+
+  def test_print(self):
+    self.assertEqual(str(self.pol_1), "x^3+2x^2-2")
+    self.assertEqual(str(self.pol_2), "x^3+2x^2-3")
+    self.assertEqual(str(self.pol_3), "-3x+1")
+    self.assertEqual(str(self.pol_4), "3x^2-5x+7")
+    self.assertEqual(str(self.pol_5), "4x^3")
 
   def test_add(self):
     self.assertEqual(self.pol_1 + 4, Polynomial([1,2,0,2]))

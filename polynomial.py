@@ -1,7 +1,12 @@
 class Polynomial:
-
   def __init__(self, varSet):
-    self.varSet = varSet
+    if (type(varSet) != list):
+      raise TypeError
+    else:
+      for var in varSet:
+        if (type(var) != int):
+          raise TypeError
+      self.varSet = varSet
 
   # print
   def __str__(self):
@@ -77,7 +82,7 @@ class Polynomial:
       res.reverse()
       return Polynomial(res)
     else:
-      raise TypeError    
+      raise TypeError
 
   def __radd__(self, other):
     return self.__add__(other)
