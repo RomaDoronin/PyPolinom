@@ -1,4 +1,4 @@
-import polynomial
+from polynomial import Polynomial
 import unittest
 
 class PolynomialTest(unittest.TestCase):
