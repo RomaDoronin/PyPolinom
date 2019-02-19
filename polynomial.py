@@ -1,3 +1,5 @@
+import unittest
+
 class Polynomial:
   def __init__(self, varSet):
     self.varSet = varSet
@@ -45,7 +47,7 @@ class Polynomial:
         pol = pol + rPol
       return pol
     else:
-      raise Exception("Invalid argument type")
+      raise TypeError
 
   def __rmul__(self, other):
     return self.__mul__(other)
@@ -76,7 +78,7 @@ class Polynomial:
       res.reverse()
       return Polynomial(res)
     else:
-      raise Exception("Invalid argument type")    
+      raise TypeError    
 
   def __radd__(self, other):
     return self.__add__(other)
@@ -90,7 +92,7 @@ class Polynomial:
     elif (type(other) == Polynomial):
       return self.__add__(other * (-1))
     else:
-      raise Exception("Invalid argument type") 
+      raise TypeError 
     
   def __rsub__(self, other):
     self = self * (-1)
@@ -99,7 +101,7 @@ class Polynomial:
   # x < y вызывает x.__lt__(y)
   def __lt__(self, other):
     if (type(other) != Polynomial):
-      raise Exception("Invalid argument type")
+      raise TypeError
     else:
       if (len(self.varSet) != len(other.varSet)):
         return len(self.varSet) < len(other.varSet)
@@ -117,7 +119,7 @@ class Polynomial:
   # x ≤ y вызывает x.__le__(y)
   def __le__(self, other):
     if (type(other) != Polynomial):
-      raise Exception("Invalid argument type")
+      raise TypeError
     else:
       if (len(self.varSet) != len(other.varSet)):
         return len(self.varSet) < len(other.varSet)
@@ -135,7 +137,7 @@ class Polynomial:
   # x == y вызывает x.__eq__(y)
   def __eq__(self, other):
     if (type(other) != Polynomial):
-      raise Exception("Invalid argument type")
+      raise TypeError
     else:
       if (len(self.varSet) != len(other.varSet)):
         return False
@@ -153,7 +155,7 @@ class Polynomial:
   # x != y вызывает x.__ne__(y)
   def __ne__(self, other):
     if (type(other) != Polynomial):
-      raise Exception("Invalid argument type")
+      raise TypeError
     else:
       if (len(self.varSet) != len(other.varSet)):
         return True
@@ -171,7 +173,7 @@ class Polynomial:
   # x > y вызывает x.__gt__(y)
   def __gt__(self, other):
     if (type(other) != Polynomial):
-      raise Exception("Invalid argument type")
+      raise TypeError
     else:
       if (len(self.varSet) != len(other.varSet)):
         return len(self.varSet) > len(other.varSet)
@@ -189,7 +191,7 @@ class Polynomial:
   # x ≥ y вызывает x.__ge__(y)
   def __ge__(self, other):
     if (type(other) != Polynomial):
-      raise Exception("Invalid argument type")
+      raise TypeError
     else:
       if (len(self.varSet) != len(other.varSet)):
         return len(self.varSet) > len(other.varSet)
@@ -203,150 +205,142 @@ class Polynomial:
 
   def __rge__(self, other):
     self.__le__(other)
-
 # end class Polynomial
 
-def TEST_F(num, test, refer):
-  if (type(test) != type(refer)):
-    raise Exception("Different types of arguments")
-  else:
-    if (test == refer):
-      print("Test " + str(num) + " : [ OK ]")
-    else:
-      print("Test " + str(num) + " : [ FAILED ] " + str(test))
+class PolynomialTest(unittest.TestCase):
 
-def TEST_EX(num, val1, op, val2, excp):
-  try:
-    if (op == "+"):
-      val1 + val2
-    elif (op == "-"):
-      val1 - val2
-    elif (op == "*"):
-      val1 * val2
-    elif (op == "<"):
-      val1 < val2
-    elif (op == "<="):
-      val1 <= val2
-    elif (op == "=="):
-      val1 == val2
-    elif (op == "!="):
-      val1 != val2
-    elif (op == ">="):
-      val1 >= val2
-    elif (op == ">"):
-      val1 > val2
-  except Exception as e:
-    if (str(e) == excp):
-      print("Test " + str(num) + " : [ OK ]")
-    else:
-      print("Test " + str(num) + " : [ FAILED ] " + str(test))
+  def setUp(self):
+    self.pol_1 = Polynomial([1,2,0,-2])
+    self.pol_2 = Polynomial([1,2,0,-3])
+    self.pol_3 = Polynomial([-3,1])
+    self.pol_4 = Polynomial([3,-5,7])
+    self.pol_5 = Polynomial([4,0,0,0])
 
+  def test_add(self):
+    self.assertEqual(self.pol_1 + 4, Polynomial([1,2,0,2]))
+    self.assertEqual(4 + self.pol_1, Polynomial([1,2,0,2]))
+    self.assertEqual(0 + self.pol_2, Polynomial([1,2,0,-3]))
+    self.assertEqual(self.pol_2 + self.pol_3, Polynomial([1,2,-3,-2]))
+    self.assertEqual(self.pol_3 + self.pol_5, Polynomial([4,0,-3,1]))
+    with self.assertRaises(TypeError):
+      self.pol_3 + '4'
+    with self.assertRaises(TypeError):
+      "tm" + self.pol_1
+        
+  def test_sub(self):
+    self.assertEqual(self.pol_1 - 4, Polynomial([1,2,0,-6]))
+    self.assertEqual(4 - self.pol_1, Polynomial([-1,-2,0,6]))
+    self.assertEqual(0 - self.pol_2, Polynomial([-1,-2,0,3]))
+    self.assertEqual(self.pol_2 - 0, Polynomial([1,2,0,-3]))
+    self.assertEqual(self.pol_2 - self.pol_3, Polynomial([1,2,3,-4]))
+    self.assertEqual(self.pol_3 - self.pol_5, Polynomial([-4,0,-3,1]))
+    self.assertEqual(self.pol_5 - self.pol_3, Polynomial([4,0,3,-1]))
+    with self.assertRaises(TypeError):
+      self.pol_3 - '4'
+    with self.assertRaises(TypeError):
+      "tm" - self.pol_1
+        
+  def test_mul(self):
+    self.assertEqual(self.pol_1 * 4, Polynomial([4,8,0,-8]))
+    self.assertEqual(4 * self.pol_1, Polynomial([4,8,0,-8]))
+    self.assertEqual(0 * self.pol_2, Polynomial([0,0,0,0]))
+    self.assertEqual(self.pol_2 * (-2), Polynomial([-2,-4,0,6]))
+    self.assertEqual(self.pol_2 * self.pol_3, Polynomial([-3,-5,2,9,-3]))
+    self.assertEqual(self.pol_3 * self.pol_5, Polynomial([-12,4,0,0,0]))
+    self.assertEqual(self.pol_5 * self.pol_3, Polynomial([-12,4,0,0,0]))
+    with self.assertRaises(TypeError):
+      self.pol_3 * '4'
+    with self.assertRaises(TypeError):
+      "tm" * self.pol_1
+        
+  def test_more(self):
+    self.assertEqual(self.pol_2 < self.pol_1, True)
+    self.assertEqual(self.pol_1 < self.pol_2, False)
+    self.assertEqual(self.pol_3 < self.pol_4, True)
+    self.assertEqual(self.pol_4 < self.pol_3, False)
+    self.assertEqual(self.pol_1 < self.pol_5, True)
+    self.assertEqual(self.pol_5 < self.pol_1, False)
+    self.assertEqual(self.pol_5 < self.pol_5, False)
+    self.assertEqual(self.pol_2 < self.pol_2, False)
+
+    self.assertEqual(self.pol_2 <= self.pol_1, True)
+    self.assertEqual(self.pol_1 <= self.pol_2, False)
+    self.assertEqual(self.pol_3 <= self.pol_4, True)
+    self.assertEqual(self.pol_4 <= self.pol_3, False)
+    self.assertEqual(self.pol_1 <= self.pol_5, True)
+    self.assertEqual(self.pol_5 <= self.pol_1, False)
+    self.assertEqual(self.pol_5 <= self.pol_5, True)
+    self.assertEqual(self.pol_2 <= self.pol_2, True)
+
+    with self.assertRaises(TypeError):
+      self.pol_3 < 4
+    with self.assertRaises(TypeError):
+      "tm" < self.pol_1
+
+    with self.assertRaises(TypeError):
+      self.pol_3 <= 4
+    with self.assertRaises(TypeError):
+      'C' <= self.pol_1
+
+  def test_less(self):
+    self.assertEqual(self.pol_2 > self.pol_1, False)
+    self.assertEqual(self.pol_1 > self.pol_2, True)
+    self.assertEqual(self.pol_3 > self.pol_4, False)
+    self.assertEqual(self.pol_4 > self.pol_3, True)
+    self.assertEqual(self.pol_1 > self.pol_5, False)
+    self.assertEqual(self.pol_5 > self.pol_1, True)
+    self.assertEqual(self.pol_5 > self.pol_5, False)
+    self.assertEqual(self.pol_2 > self.pol_2, False)
+
+    self.assertEqual(self.pol_2 >= self.pol_1, False)
+    self.assertEqual(self.pol_1 >= self.pol_2, True)
+    self.assertEqual(self.pol_3 >= self.pol_4, False)
+    self.assertEqual(self.pol_4 >= self.pol_3, True)
+    self.assertEqual(self.pol_1 >= self.pol_5, False)
+    self.assertEqual(self.pol_5 >= self.pol_1, True)
+    self.assertEqual(self.pol_5 >= self.pol_5, True)
+    self.assertEqual(self.pol_2 >= self.pol_2, True)
+
+    with self.assertRaises(TypeError):
+      self.pol_3 > 4
+    with self.assertRaises(TypeError):
+      "tm" > self.pol_1
+
+    with self.assertRaises(TypeError):
+      self.pol_3 >= 4
+    with self.assertRaises(TypeError):
+      'C' >= self.pol_1
+
+  def test_equal(self):
+    self.assertEqual(self.pol_2 == self.pol_1, False)
+    self.assertEqual(self.pol_1 == self.pol_2, False)
+    self.assertEqual(self.pol_3 == self.pol_4, False)
+    self.assertEqual(self.pol_4 == self.pol_3, False)
+    self.assertEqual(self.pol_1 == self.pol_5, False)
+    self.assertEqual(self.pol_5 == self.pol_1, False)
+    self.assertEqual(self.pol_5 == self.pol_5, True)
+    self.assertEqual(self.pol_2 == self.pol_2, True)
+
+    self.assertEqual(self.pol_2 != self.pol_1, True)
+    self.assertEqual(self.pol_1 != self.pol_2, True)
+    self.assertEqual(self.pol_3 != self.pol_4, True)
+    self.assertEqual(self.pol_4 != self.pol_3, True)
+    self.assertEqual(self.pol_1 != self.pol_5, True)
+    self.assertEqual(self.pol_5 != self.pol_1, True)
+    self.assertEqual(self.pol_5 != self.pol_5, False)
+    self.assertEqual(self.pol_2 != self.pol_2, False)
+
+    with self.assertRaises(TypeError):
+      self.pol_3 == 4
+    with self.assertRaises(TypeError):
+      "tm" == self.pol_1
+    
+    with self.assertRaises(TypeError):
+      self.pol_3 != 4
+    with self.assertRaises(TypeError):
+      'C' != self.pol_1
+# end class PolynomialTest
+	  
 # Main
-pol_1 = Polynomial([1,2,0,-2])
-pol_2 = Polynomial([1,2,0,-3])
-pol_3 = Polynomial([-3,1])
-pol_4 = Polynomial([3,-5,7])
-pol_5 = Polynomial([4,0,0,0])
-
-print("--------------------------------- [+]")
-TEST_F(1.1, pol_1 + 4, Polynomial([1,2,0,2]))
-TEST_F(1.2, 4 + pol_1, Polynomial([1,2,0,2]))
-TEST_F(1.3, 0 + pol_2, Polynomial([1,2,0,-3]))
-TEST_F(1.4, pol_2 + pol_3, Polynomial([1,2,-3,-2]))
-TEST_F(1.5, pol_3 + pol_5, Polynomial([4,0,-3,1]))
-TEST_EX(1.6, pol_3, "+", '4', "Invalid argument type")
-TEST_EX(1.7, "tm", "+", pol_1, "Invalid argument type")
-
-print("--------------------------------- [-]")
-TEST_F(2.1, pol_1 - 4, Polynomial([1,2,0,-6]))
-TEST_F(2.2, 4 - pol_1, Polynomial([-1,-2,0,6]))
-TEST_F(2.3, 0 - pol_2, Polynomial([-1,-2,0,3]))
-TEST_F(2.3, pol_2 - 0, Polynomial([1,2,0,-3]))
-TEST_F(2.4, pol_2 - pol_3, Polynomial([1,2,3,-4]))
-TEST_F(2.5, pol_3 - pol_5, Polynomial([-4,0,-3,1]))
-TEST_F(2.6, pol_5 - pol_3, Polynomial([4,0,3,-1]))
-TEST_EX(2.7, pol_3, "-", '4', "Invalid argument type")
-TEST_EX(2.8, "tm", "-", pol_1, "Invalid argument type")
-
-print("--------------------------------- [*]")
-TEST_F(3.1, pol_1 * 4, Polynomial([4,8,0,-8]))
-TEST_F(3.2, 4 * pol_1, Polynomial([4,8,0,-8]))
-TEST_F(3.3, 0 * pol_2, Polynomial([0,0,0,0]))
-TEST_F(3.3, pol_2 * (-2), Polynomial([-2,-4,0,6]))
-TEST_F(3.4, pol_2 * pol_3, Polynomial([-3,-5,2,9,-3]))
-TEST_F(3.5, pol_3 * pol_5, Polynomial([-12,4,0,0,0]))
-TEST_F(3.6, pol_5 * pol_3, Polynomial([-12,4,0,0,0]))
-TEST_EX(3.7, pol_3, "*", '4', "Invalid argument type")
-TEST_EX(3.8, "tm", "*", pol_1, "Invalid argument type")
-
-print("--------------------------------- [<]")
-TEST_F(4.1, pol_2 < pol_1, True)
-TEST_F(4.2, pol_1 < pol_2, False)
-TEST_F(4.3, pol_3 < pol_4, True)
-TEST_F(4.4, pol_4 < pol_3, False)
-TEST_F(4.5, pol_1 < pol_5, True)
-TEST_F(4.6, pol_5 < pol_1, False)
-TEST_F(4.7, pol_5 < pol_5, False)
-TEST_F(4.8, pol_2 < pol_2, False)
-TEST_EX(4.9, pol_3, "<", '4', "Invalid argument type")
-TEST_EX(4.10, 4, "<", pol_1, "Invalid argument type")
-
-print("--------------------------------- [<=]")
-TEST_F(4.1, pol_2 <= pol_1, True)
-TEST_F(4.2, pol_1 <= pol_2, False)
-TEST_F(4.3, pol_3 <= pol_4, True)
-TEST_F(4.4, pol_4 <= pol_3, False)
-TEST_F(4.5, pol_1 <= pol_5, True)
-TEST_F(4.6, pol_5 <= pol_1, False)
-TEST_F(4.7, pol_5 <= pol_5, True)
-TEST_F(4.8, pol_2 <= pol_2, True)
-TEST_EX(4.9, pol_3, "<=", '4', "Invalid argument type")
-TEST_EX(4.1, 4, "<=", pol_1, "Invalid argument type")
-
-print("--------------------------------- [>]")
-TEST_F(4.1, pol_2 > pol_1, False)
-TEST_F(4.2, pol_1 > pol_2, True)
-TEST_F(4.3, pol_3 > pol_4, False)
-TEST_F(4.4, pol_4 > pol_3, True)
-TEST_F(4.5, pol_1 > pol_5, False)
-TEST_F(4.6, pol_5 > pol_1, True)
-TEST_F(4.7, pol_5 > pol_5, False)
-TEST_F(4.8, pol_2 > pol_2, False)
-TEST_EX(4.9, pol_3, ">", '4', "Invalid argument type")
-TEST_EX(4.10, 4, ">", pol_1, "Invalid argument type")
-
-print("--------------------------------- [>=]")
-TEST_F(4.1, pol_2 >= pol_1, False)
-TEST_F(4.2, pol_1 >= pol_2, True)
-TEST_F(4.3, pol_3 >= pol_4, False)
-TEST_F(4.4, pol_4 >= pol_3, True)
-TEST_F(4.5, pol_1 >= pol_5, False)
-TEST_F(4.6, pol_5 >= pol_1, True)
-TEST_F(4.7, pol_5 >= pol_5, True)
-TEST_F(4.8, pol_2 >= pol_2, True)
-TEST_EX(4.9, pol_3, ">=", '4', "Invalid argument type")
-TEST_EX(4.10, 4, ">=", pol_1, "Invalid argument type")
-
-print("--------------------------------- [==]")
-TEST_F(4.1, pol_2 == pol_1, False)
-TEST_F(4.2, pol_1 == pol_2, False)
-TEST_F(4.3, pol_3 == pol_4, False)
-TEST_F(4.4, pol_4 == pol_3, False)
-TEST_F(4.5, pol_1 == pol_5, False)
-TEST_F(4.6, pol_5 == pol_1, False)
-TEST_F(4.7, pol_5 == pol_5, True)
-TEST_F(4.8, pol_2 == pol_2, True)
-TEST_EX(4.9, pol_3, "==", '4', "Invalid argument type")
-TEST_EX(4.10, 4, "==", pol_1, "Invalid argument type")
-
-print("--------------------------------- [!=]")
-TEST_F(4.1, pol_2 != pol_1, True)
-TEST_F(4.2, pol_1 != pol_2, True)
-TEST_F(4.3, pol_3 != pol_4, True)
-TEST_F(4.4, pol_4 != pol_3, True)
-TEST_F(4.5, pol_1 != pol_5, True)
-TEST_F(4.6, pol_5 != pol_1, True)
-TEST_F(4.7, pol_5 != pol_5, False)
-TEST_F(4.8, pol_2 != pol_2, False)
-TEST_EX(4.9, pol_3, "!=", '4', "Invalid argument type")
-TEST_EX(4.10, 4, "!=", pol_1, "Invalid argument type")
+if __name__ == '__main__':
+    unittest.main()
