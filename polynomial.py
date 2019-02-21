@@ -3,33 +3,43 @@ class Polynomial:
     if (type(varSet) != list):
       raise TypeError
     else:
+      removeZeros = False
+      initList = []
       for var in varSet:
         if (type(var) != int):
           raise TypeError
-      self.varSet = varSet
+        if (var != 0):
+          removeZeros = True
+        if (removeZeros):
+          initList.append(var)
+      self.varSet = initList
 
   # print
   def __str__(self):
     strRes = ""
-    count = len(self.varSet) - 1
-    for i in self.varSet:
-      if (i != 0):
-        if (i > 0 and count != len(self.varSet) - 1):
-          strRes += "+"
 
-        if (i == -1 and count != 0):
-          strRes += "-"
-        elif (i == 1 and count != 0):
-          pass
-        else:
-          strRes += str(i)
+    if (len(self.varSet)):
+      count = len(self.varSet) - 1
+      for i in self.varSet:
+        if (i != 0):
+          if (i > 0 and count != len(self.varSet) - 1):
+            strRes += "+"
 
-        if (count == 1):
-          strRes += "x"
-        elif (count != 0):
-          strRes += "x^" + str(count)
+          if (i == -1 and count != 0):
+            strRes += "-"
+          elif (i == 1 and count != 0):
+            pass
+          else:
+            strRes += str(i)
 
-      count -= 1
+          if (count == 1):
+            strRes += "x"
+          elif (count != 0):
+            strRes += "x^" + str(count)
+
+        count -= 1
+    else:
+       strRes += "0"
 
     return strRes
 
@@ -102,42 +112,6 @@ class Polynomial:
     self = self * (-1)
     return self.__add__(other)
 
-  # x < y вызывает x.__lt__(y)
-  def __lt__(self, other):
-    if (type(other) != Polynomial):
-      raise TypeError
-    else:
-      if (len(self.varSet) != len(other.varSet)):
-        return len(self.varSet) < len(other.varSet)
-      else:
-        for i in range(len(self.varSet)):
-          if self.varSet[i] == other.varSet[i]:
-            continue
-          else:
-            return self.varSet[i] < other.varSet[i]
-        return False
-
-  def __rlt__(self, other):
-    self.__gt__(other)
-  
-  # x ≤ y вызывает x.__le__(y)
-  def __le__(self, other):
-    if (type(other) != Polynomial):
-      raise TypeError
-    else:
-      if (len(self.varSet) != len(other.varSet)):
-        return len(self.varSet) < len(other.varSet)
-      else:
-        for i in range(len(self.varSet)):
-          if self.varSet[i] == other.varSet[i]:
-            continue
-          else:
-            return self.varSet[i] <= other.varSet[i]
-        return True
-
-  def __rle__(self, other):
-    self.__ge__(other)
-
   # x == y вызывает x.__eq__(y)
   def __eq__(self, other):
     if (type(other) != Polynomial):
@@ -173,40 +147,4 @@ class Polynomial:
 
   def __rne__(self, other):
     self.__ne__(other)
-
-  # x > y вызывает x.__gt__(y)
-  def __gt__(self, other):
-    if (type(other) != Polynomial):
-      raise TypeError
-    else:
-      if (len(self.varSet) != len(other.varSet)):
-        return len(self.varSet) > len(other.varSet)
-      else:
-        for i in range(len(self.varSet)):
-          if self.varSet[i] == other.varSet[i]:
-            continue
-          else:
-            return self.varSet[i] > other.varSet[i]
-        return False
-
-  def __rgt__(self, other):
-    self.__lt__(other)
-
-  # x ≥ y вызывает x.__ge__(y)
-  def __ge__(self, other):
-    if (type(other) != Polynomial):
-      raise TypeError
-    else:
-      if (len(self.varSet) != len(other.varSet)):
-        return len(self.varSet) > len(other.varSet)
-      else:
-        for i in range(len(self.varSet)):
-          if self.varSet[i] == other.varSet[i]:
-            continue
-          else:
-            return self.varSet[i] >= other.varSet[i]
-        return True
-
-  def __rge__(self, other):
-    self.__le__(other)
 # end class Polynomial
