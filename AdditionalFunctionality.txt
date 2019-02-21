@@ -1,0 +1,44 @@
+from scipy.optimize import fmin
+from numpy import array
+from pol import *
+
+    
+class CookFunction:
+    def __init__(self, pol):
+        self.pol = pol
+        
+    def func(self, x):
+        res = 0
+        count = 0
+        for i in range(len(self.pol.varSet)-1,0,-1):
+            res += self.pol.varSet[i]*pow(x,count)
+            count = count + 1
+        return res
+# end class CookFunction
+
+
+def CheckIntersections(pol):
+    fOur = CookFunction(pol)
+    xVal = 1
+    sol = fmin(fOur.func,xVal)
+    print("Solution : " + str(fOur.func(sol[0])))
+    if (fOur.func(sol[0]) > 0 and pol.varSet[0] > 0 or fOur.func(sol[0]) < 0 and pol.varSet[0] < 0):
+        print("Intersections: -")
+        return False;
+    else:
+        print("Intersections: +")
+        return True;
+
+# Main
+
+#tmp = fmin(func_1,xVal)
+#print("type : " + str(type(tmp)))
+#print("tmp[0] : " + str(tmp[0]))
+#print("Solution : " + str(func_1(tmp[0])))
+
+pol_1 = Polynomial([1,0,0,2,0,0,3])
+pol_2 = Polynomial([1,0,-1,0,0,3])
+print(pol_1)
+print(pol_2)
+print("pol_1 - pol2 : " + str(pol_1 - pol_2))
+CheckIntersections(pol_1 - pol_2)
