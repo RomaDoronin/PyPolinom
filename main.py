@@ -100,8 +100,7 @@ class PolynomialTest(unittest.TestCase):
       self.pol_3 != 4
     with self.assertRaises(TypeError):
       'C' != self.pol_1
-# end class PolynomialTest
 
-# Main
+
 if __name__ == '__main__':
     unittest.main()

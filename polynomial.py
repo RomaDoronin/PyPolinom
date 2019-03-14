@@ -16,11 +16,9 @@ class Polynomial:
         initList.append(var)
     self.varSet = initList
 
-  # len
   def __len__(self):
     return len(self.varSet)
 
-  # print
   def __str__(self):
     strRes = ""
 
@@ -49,7 +47,6 @@ class Polynomial:
 
     return strRes
 
-  # *
   def __mul__(self, other):
     varSet = []
     if isinstance(other, int):
@@ -69,7 +66,6 @@ class Polynomial:
   def __rmul__(self, other):
     return self * other
 
-  # +
   def __add__(self, other):
     if isinstance(other, int):
       res = self.varSet.copy()
@@ -100,18 +96,16 @@ class Polynomial:
   def __radd__(self, other):
     return self + other
  
-  # -
   def __sub__(self, other):
     if isinstance(other, (Polynomial, int)):
       return self + (-1 * other)
     else:
       raise TypeError 
-    
+
   def __rsub__(self, other):
     self = self * (-1)
     return self.__add__(other)
 
-  # x == y вызывает x.__eq__(y)
   def __eq__(self, other):
     if not isinstance(other, Polynomial):
       raise TypeError
@@ -129,7 +123,6 @@ class Polynomial:
   def __req__(self, other):
     self.__eq__(other)
 
-  # x != y вызывает x.__ne__(y)
   def __ne__(self, other):
     return not (self == other)
 
@@ -138,4 +131,3 @@ class Polynomial:
 
   def __repr__(self):
     return "Polynomial({})".format(repr(self.varSet))
-# end class Polynomial
