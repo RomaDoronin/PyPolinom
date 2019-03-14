@@ -1,18 +1,24 @@
 class Polynomial:
   def __init__(self, varSet):
-    if (type(varSet) != list):
-      raise TypeError
-    else:
-      removeZeros = False
-      initList = []
-      for var in varSet:
-        if (type(var) != int):
-          raise TypeError
-        if (var != 0):
-          removeZeros = True
-        if (removeZeros):
-          initList.append(var)
-      self.varSet = initList
+    if len(varSet) == 0:
+      raise ValueError
+    if not isinstance(varSet, (list, tuple)):
+      raise ValueError
+    if not all(map(lambda x: isinstance(x, int), varSet)):
+      raise ValueError
+
+    removeZeros = False
+    initList = []
+    for var in varSet:
+      if (var != 0):
+        removeZeros = True
+      if (removeZeros):
+        initList.append(var)
+    self.varSet = initList
+
+  # len
+  def __len__(self):
+    return len(self.varSet)
 
   # print
   def __str__(self):
@@ -45,34 +51,31 @@ class Polynomial:
 
   # *
   def __mul__(self, other):
-    if (type(other) == int):
-      res = []
-      for i in self.varSet:
-        res.append(i * other)
-      return Polynomial(res)
-    elif (type(other) == Polynomial):
-      pol = Polynomial([])
-      count = 0
-      for i in range(len(other.varSet) - 1, -1, -1):
-        rPol = (self * other.varSet[i])
-        for j in range(count):
-          rPol.varSet.append(0)
-        count = count + 1
-        pol = pol + rPol
-      return pol
+    varSet = []
+    if isinstance(other, int):
+      assert other != 0
+      for i in range(len(self)):
+        varSet.append(self.varSet[i] * other)
+      return Polynomial(varSet)
+    elif isinstance(other, Polynomial):
+      varSet = [0] * (len(self) + len(other) - 1)
+      for i, x1 in enumerate(self.varSet):
+        for j, x2 in enumerate(other.varSet):
+          varSet[i + j] += x1 * x2
+      return Polynomial(varSet)
     else:
       raise TypeError
 
   def __rmul__(self, other):
-    return self.__mul__(other)
+    return self * other
 
   # +
   def __add__(self, other):
-    if (type(other) == int):
+    if isinstance(other, int):
       res = self.varSet.copy()
       res[-1] += other
       return Polynomial(res)
-    elif (type(other) == Polynomial):
+    elif isinstance(other, Polynomial):
       l1 = self.varSet.copy()
       l1.reverse()
 
@@ -95,16 +98,12 @@ class Polynomial:
       raise TypeError
 
   def __radd__(self, other):
-    return self.__add__(other)
+    return self + other
  
   # -
   def __sub__(self, other):
-    if (type(other) == int):
-      res = self.varSet.copy()
-      res[-1] -= other
-      return Polynomial(res)
-    elif (type(other) == Polynomial):
-      return self.__add__(other * (-1))
+    if isinstance(other, (Polynomial, int)):
+      return self + (-1 * other)
     else:
       raise TypeError 
     
@@ -114,10 +113,10 @@ class Polynomial:
 
   # x == y вызывает x.__eq__(y)
   def __eq__(self, other):
-    if (type(other) != Polynomial):
+    if not isinstance(other, Polynomial):
       raise TypeError
     else:
-      if (len(self.varSet) != len(other.varSet)):
+      if len(self) != len(other):
         return False
       else:
         for i in range(len(self.varSet)):
@@ -132,19 +131,11 @@ class Polynomial:
 
   # x != y вызывает x.__ne__(y)
   def __ne__(self, other):
-    if (type(other) != Polynomial):
-      raise TypeError
-    else:
-      if (len(self.varSet) != len(other.varSet)):
-        return True
-      else:
-        for i in range(len(self.varSet)):
-          if self.varSet[i] == other.varSet[i]:
-            continue
-          else:
-            return True
-        return False
+    return not (self == other)
 
   def __rne__(self, other):
     self.__ne__(other)
+
+  def __repr__(self):
+    return "Polynomial({})".format(repr(self.varSet))
 # end class Polynomial
