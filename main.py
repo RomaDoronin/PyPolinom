@@ -58,6 +58,8 @@ class PolynomialTest(unittest.TestCase):
     self.assertEqual(self.pol_1 * 4, Polynomial([4,8,0,-8]))
     self.assertEqual(4 * self.pol_1, Polynomial([4,8,0,-8]))
     self.assertEqual(self.pol_2 * (-2), Polynomial([-2,-4,0,6]))
+    self.assertEqual(self.pol_2 * 0, Polynomial([0,0,0,0]))
+    self.assertEqual(0 * self.pol_3, Polynomial([0,0,0,0,0]))
     self.assertEqual(self.pol_2 * self.pol_3, Polynomial([-3,-5,2,9,-3]))
     self.assertEqual(self.pol_3 * self.pol_5, Polynomial([-12,4,0,0,0]))
     self.assertEqual(self.pol_5 * self.pol_3, Polynomial([-12,4,0,0,0]))
