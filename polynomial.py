@@ -1,32 +1,32 @@
 class Polynomial:
-  def __init__(self, varSet):
-    if len(varSet) == 0:
+  def __init__(self, coeffs):
+    if len(coeffs) == 0:
       raise ValueError
-    if not isinstance(varSet, (list, tuple)):
+    if not isinstance(coeffs, (list, tuple)):
       raise ValueError
-    if not all(map(lambda x: isinstance(x, int), varSet)):
+    if not all(map(lambda x: isinstance(x, int), coeffs)):
       raise ValueError
 
     removeZeros = False
     initList = []
-    for var in varSet:
+    for var in coeffs:
       if (var != 0):
         removeZeros = True
       if (removeZeros):
         initList.append(var)
-    self.varSet = initList
+    self.coeffs = initList
 
   def __len__(self):
-    return len(self.varSet)
+    return len(self.coeffs)
 
   def __str__(self):
     strRes = ""
 
-    if (len(self.varSet)):
-      count = len(self.varSet) - 1
-      for i in self.varSet:
+    if (len(self.coeffs)):
+      count = len(self.coeffs) - 1
+      for i in self.coeffs:
         if (i != 0):
-          if (i > 0 and count != len(self.varSet) - 1):
+          if (i > 0 and count != len(self.coeffs) - 1):
             strRes += "+"
 
           if (i == -1 and count != 0):
@@ -48,18 +48,18 @@ class Polynomial:
     return strRes
 
   def __mul__(self, other):
-    varSet = []
+    coeffs = []
     if isinstance(other, int):
       assert other != 0
       for i in range(len(self)):
-        varSet.append(self.varSet[i] * other)
-      return Polynomial(varSet)
+        coeffs.append(self.coeffs[i] * other)
+      return Polynomial(coeffs)
     elif isinstance(other, Polynomial):
-      varSet = [0] * (len(self) + len(other) - 1)
-      for i, x1 in enumerate(self.varSet):
-        for j, x2 in enumerate(other.varSet):
-          varSet[i + j] += x1 * x2
-      return Polynomial(varSet)
+      coeffs = [0] * (len(self) + len(other) - 1)
+      for i, x1 in enumerate(self.coeffs):
+        for j, x2 in enumerate(other.coeffs):
+          coeffs[i + j] += x1 * x2
+      return Polynomial(coeffs)
     else:
       raise TypeError
 
@@ -68,14 +68,14 @@ class Polynomial:
 
   def __add__(self, other):
     if isinstance(other, int):
-      res = self.varSet.copy()
+      res = self.coeffs[:]
       res[-1] += other
       return Polynomial(res)
     elif isinstance(other, Polynomial):
-      l1 = self.varSet.copy()
+      l1 = self.coeffs[:]
       l1.reverse()
 
-      l2 = other.varSet.copy()
+      l2 = other.coeffs[:]
       l2.reverse()
 
       minLen = min(len(l1), len(l2))
@@ -113,8 +113,8 @@ class Polynomial:
       if len(self) != len(other):
         return False
       else:
-        for i in range(len(self.varSet)):
-          if self.varSet[i] == other.varSet[i]:
+        for i in range(len(self.coeffs)):
+          if self.coeffs[i] == other.coeffs[i]:
             continue
           else:
             return False
@@ -130,4 +130,4 @@ class Polynomial:
     self.__ne__(other)
 
   def __repr__(self):
-    return "Polynomial({})".format(repr(self.varSet))
+    return "Polynomial({})".format(repr(self.coeffs))
