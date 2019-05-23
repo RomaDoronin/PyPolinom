@@ -50,7 +50,6 @@ class Polynomial:
   def __mul__(self, other):
     coeffs = []
     if isinstance(other, int):
-      assert other != 0
       for i in range(len(self)):
         coeffs.append(self.coeffs[i] * other)
       return Polynomial(coeffs)
